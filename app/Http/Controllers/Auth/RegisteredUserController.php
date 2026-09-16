@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\Team0001OtpMail;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -114,8 +113,6 @@ class RegisteredUserController extends Controller
             'email_otp' => Hash::make((string) $otp),
             'otp_expires_at' => now()->addMinutes(10),
         ]);
-
-        event(new Registered($user));
 
         Mail::to($user->email)->send(new Team0001OtpMail($user, $otp));
 

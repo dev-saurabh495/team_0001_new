@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Mail\Team0001OtpMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -18,6 +20,8 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_and_receive_otp(): void
     {
+        Mail::fake();
+
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -33,5 +37,6 @@ class RegistrationTest extends TestCase
         $this->assertNotNull($user->email_otp);
         $this->assertNull($user->email_verified_at);
         $response->assertRedirect(route('otp.verify', absolute: false));
+        Mail::assertSent(Team0001OtpMail::class, 1);
     }
 }

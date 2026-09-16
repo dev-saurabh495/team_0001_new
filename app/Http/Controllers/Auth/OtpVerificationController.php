@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Team0001WelcomeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class OtpVerificationController extends Controller
@@ -40,6 +42,9 @@ class OtpVerificationController extends Controller
 
         auth()->login($user);
         $request->session()->regenerate();
+        $request->session()->forget('otp_email');
+
+        Mail::to($user->email)->send(new Team0001WelcomeMail($user));
 
         return redirect()->route('dashboard')->with('status', 'Email verified successfully. Welcome to Team 0001!');
     }
