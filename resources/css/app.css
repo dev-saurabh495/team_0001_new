@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* Enables class-based dark mode: <html class="dark"> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    /* Fonts */
+    --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: "Cinzel", ui-serif, Georgia, serif;
+
+    /* Core brand */
+    --color-navy: #0D1B2A;
+    --color-navy-light: #1B263B;
+    --color-gold: #D4AF37;
+    --color-gold-dark: #B8941F;
+
+    /* Semantic tokens */
+    --color-background: #F8FAFC;
+    --color-background-dark: #0D1B2A;
+
+    --color-surface: #FFFFFF;
+    --color-surface-dark: #1B263B;
+
+    --color-text-primary: #0D1B2A;
+    --color-text-primary-dark: #FFFFFF;
+
+    --color-text-secondary: #475569;
+    --color-text-secondary-dark: #CBD5E1;
+
+    --color-border-subtle: #E2E8F0;
+    --color-border-subtle-dark: rgba(255, 255, 255, 0.10);
+}
+
+@layer components {
+    .team0001-logo-badge {
+        @apply relative flex aspect-square items-center justify-center overflow-hidden rounded-full border border-[#D4AF37]/80 bg-white shadow-[0_12px_28px_rgba(13,27,42,0.10)] transition-colors duration-300;
+    }
+
+    .dark .team0001-logo-badge {
+        @apply border-[#D4AF37]/80 bg-[#1B263B] shadow-[0_12px_28px_rgba(2,6,23,0.32)];
+    }
+
+    .team0001-logo-badge img {
+        @apply h-[62%] w-[62%] object-contain;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
