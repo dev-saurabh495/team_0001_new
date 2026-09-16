@@ -7,45 +7,140 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
 
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Show the registration form.
      */
-    public function create(): View
+    public function create()
     {
         return view('auth.register');
     }
 
     /**
      * Handle an incoming registration request.
-     *
-     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        /*
+         * Rate-limit registration attempts by IP address.
+         *
+         * This helps prevent automated account creation.
+         */
+        $key = 'register:' . Str::lower($request->ip());
+
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
+
+            return back()
+                ->withInput($request->except([
+                    'password',
+                    'password_confirmation',
+                ]))
+                ->withErrors([
+                    'email' => "Too many registration attempts. Please try again in {$seconds} seconds.",
+                ]);
+        }
+
+        RateLimiter::hit($key, 60);
+
+        /*
+         * Validate the request.
+         */
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email:rfc,dns',
+                'max:255',
+                'unique:users,email',
+            ],
+
+            'phone' => [
+                'nullable',
+                'string',
+                'max:30',
+                'regex:/^[+()0-9\s-]{7,30}$/',
+            ],
+
+            'password' => [
+                'required',
+                'confirmed',
+                Password::defaults(),
+            ],
+
+            'terms' => [
+                'required',
+                'accepted',
+            ],
+        ], [
+            'name.required' => 'Please enter your full name.',
+
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'An account with this email already exists.',
+
+            'phone.regex' => 'Please enter a valid phone number.',
+
+            'password.confirmed' => 'The passwords do not match.',
+
+            'terms.accepted' => 'You must accept the Terms of Service and Community Guidelines.',
         ]);
 
+        /*
+         * Create the user.
+         *
+         * Hash::make() ensures the raw password is never stored.
+         */
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'password' => Hash::make($validated['password']),
         ]);
 
+        /*
+         * Fire Laravel's Registered event.
+         *
+         * This is useful for email verification and other
+         * registration-related listeners.
+         */
         event(new Registered($user));
 
-        Auth::login($user);
+        /*
+         * Log the user in immediately after registration.
+         */
+        auth()->login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        /*
+         * Regenerate the session ID to prevent session fixation.
+         */
+        $request->session()->regenerate();
+
+        /*
+         * Clear the rate limiter after successful registration.
+         */
+        RateLimiter::clear($key);
+
+        /*
+         * Redirect to dashboard.
+         */
+        event(new Registered($user));
+
+        return redirect()
+            ->route('login')
+            ->with('success', 'Account created successfully. Please login to continue.');
     }
 }
