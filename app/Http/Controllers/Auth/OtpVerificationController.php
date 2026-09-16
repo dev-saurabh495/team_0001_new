@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\Team0001WelcomeMail;
 use App\Models\User;
+use App\Notifications\Team0001ActivityNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -45,6 +46,12 @@ class OtpVerificationController extends Controller
         $request->session()->forget('otp_email');
 
         Mail::to($user->email)->send(new Team0001WelcomeMail($user));
+        $user->notify(new Team0001ActivityNotification(
+            'Welcome to Team 0001',
+            'Your account is verified and ready to make an impact.',
+            'welcome',
+            route('profile.edit'),
+        ));
 
         return redirect()->route('dashboard')->with('status', 'Email verified successfully. Welcome to Team 0001!');
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Notifications\Team0001ActivityNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,12 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        $request->user()->notify(new Team0001ActivityNotification(
+            'New sign-in detected',
+            'Your Team 0001 account was just accessed successfully.',
+            'security',
+            route('profile.edit'),
+        ));
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

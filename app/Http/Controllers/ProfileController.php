@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Notifications\Team0001ActivityNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,12 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+        $request->user()->notify(new Team0001ActivityNotification(
+            'Profile updated',
+            'Your Team 0001 profile details were saved successfully.',
+            'profile',
+            route('profile.edit'),
+        ));
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
