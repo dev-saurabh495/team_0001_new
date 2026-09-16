@@ -120,7 +120,9 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         /*
-         * Log the user in immediately after registration.
+         * Log the user in immediately after registration so they can access
+         * the verification page, but keep the account unverified until they
+         * confirm their email address.
          */
         auth()->login($user);
 
@@ -134,13 +136,8 @@ class RegisteredUserController extends Controller
          */
         RateLimiter::clear($key);
 
-        /*
-         * Redirect to dashboard.
-         */
-        event(new Registered($user));
-
         return redirect()
-            ->route('login')
-            ->with('success', 'Account created successfully. Please login to continue.');
+            ->route('verification.notice')
+            ->with('status', 'Account created successfully. Please verify your email to continue.');
     }
 }

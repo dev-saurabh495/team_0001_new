@@ -7,7 +7,7 @@
         <p class="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold-dark dark:text-gold">Email verification</p>
         <h2 class="mt-3 text-3xl font-semibold text-text-primary dark:text-text-primary-dark">Check your inbox</h2>
         <p class="mt-2 text-sm leading-6 text-text-secondary dark:text-text-secondary-dark">
-            We’ve sent a verification link to <span class="font-semibold text-text-primary dark:text-text-primary-dark">you@example.com</span>. Click it to continue.
+            We’ve sent a verification link to <span class="font-semibold text-text-primary dark:text-text-primary-dark">{{ auth()->user()->email }}</span>. Click it to continue.
         </p>
     </div>
 
