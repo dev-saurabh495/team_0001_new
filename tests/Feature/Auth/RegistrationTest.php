@@ -16,7 +16,7 @@ class RegistrationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_new_users_can_register(): void
+    public function test_new_users_can_register_and_receive_otp(): void
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
@@ -27,7 +27,11 @@ class RegistrationTest extends TestCase
             'terms' => 'on',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('verification.notice', absolute: false));
+        $this->assertGuest();
+        $user = \App\Models\User::where('email', 'test@example.com')->first();
+        $this->assertNotNull($user);
+        $this->assertNotNull($user->email_otp);
+        $this->assertNull($user->email_verified_at);
+        $response->assertRedirect(route('otp.verify', absolute: false));
     }
 }

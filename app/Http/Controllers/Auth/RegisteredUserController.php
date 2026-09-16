@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Team0001OtpMail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -100,44 +102,29 @@ class RegisteredUserController extends Controller
         ]);
 
         /*
-         * Create the user.
-         *
-         * Hash::make() ensures the raw password is never stored.
+         * Create the user and generate a 6-digit OTP to verify email ownership.
          */
+        $otp = random_int(100000, 999999);
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
             'password' => Hash::make($validated['password']),
+            'email_otp' => Hash::make((string) $otp),
+            'otp_expires_at' => now()->addMinutes(10),
         ]);
 
-        /*
-         * Fire Laravel's Registered event.
-         *
-         * This is useful for email verification and other
-         * registration-related listeners.
-         */
         event(new Registered($user));
 
-        /*
-         * Log the user in immediately after registration so they can access
-         * the verification page, but keep the account unverified until they
-         * confirm their email address.
-         */
-        auth()->login($user);
+        Mail::to($user->email)->send(new Team0001OtpMail($user, $otp));
 
-        /*
-         * Regenerate the session ID to prevent session fixation.
-         */
-        $request->session()->regenerate();
-
-        /*
-         * Clear the rate limiter after successful registration.
-         */
         RateLimiter::clear($key);
 
+        $request->session()->put('otp_email', $user->email);
+
         return redirect()
-            ->route('verification.notice')
-            ->with('status', 'Account created successfully. Please verify your email to continue.');
+            ->route('otp.verify')
+            ->with('status', 'Your account has been created. Please enter the 6-digit OTP sent to your email.');
     }
 }
