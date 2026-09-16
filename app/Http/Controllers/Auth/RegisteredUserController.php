@@ -63,7 +63,7 @@ class RegisteredUserController extends Controller
                 'required',
                 'string',
                 'lowercase',
-                'email:rfc,dns',
+                'email',
                 'max:255',
                 'unique:users,email',
             ],
