@@ -1,46 +1,276 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-                <p class="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold-dark dark:text-gold">Member workspace</p>
-                <h1 class="mt-2 font-heading text-3xl text-text-primary dark:text-text-primary-dark sm:text-4xl">Good morning, {{ explode(' ', Auth::user()->name)[0] }}.</h1>
-                <p class="mt-2 text-sm text-text-secondary dark:text-text-secondary-dark">Your Team 0001 activity, account health and community updates in one place.</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <label for="dashboard-theme" class="sr-only">Choose theme</label>
-                <select id="dashboard-theme" x-model="theme" class="rounded-xl border border-border-subtle bg-surface px-3 py-2.5 text-xs font-semibold text-text-primary outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20 dark:border-border-subtle-dark dark:bg-surface-dark dark:text-text-primary-dark"><option value="system">System theme</option><option value="light">Light mode</option><option value="dark">Dark mode</option></select>
-                <div x-data="{ notificationsOpen: false }" class="relative">
-                    <button type="button" @click="notificationsOpen = !notificationsOpen" class="relative rounded-xl border border-border-subtle bg-surface p-2.5 text-text-secondary transition hover:border-gold hover:text-gold-dark dark:border-border-subtle-dark dark:bg-surface-dark dark:text-text-secondary-dark dark:hover:text-gold" aria-label="View notifications">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
-                        @if ($unreadNotifications > 0)<span class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-bold text-navy">{{ $unreadNotifications > 9 ? '9+' : $unreadNotifications }}</span>@endif
-                    </button>
-                    <div x-show="notificationsOpen" x-cloak @click.outside="notificationsOpen = false" class="absolute right-0 top-12 z-30 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border-subtle bg-surface shadow-[0_20px_50px_rgba(13,27,42,0.16)] dark:border-border-subtle-dark dark:bg-surface-dark">
-                        <div class="flex items-center justify-between border-b border-border-subtle px-4 py-3 dark:border-border-subtle-dark"><div><p class="text-sm font-semibold text-text-primary dark:text-text-primary-dark">Notifications</p><p class="text-xs text-text-secondary dark:text-text-secondary-dark">{{ $unreadNotifications }} unread</p></div>@if ($unreadNotifications > 0)<form method="POST" action="{{ route('notifications.read-all') }}">@csrf<button class="text-xs font-semibold text-gold-dark hover:text-gold dark:text-gold">Mark all read</button></form>@endif</div>
-                        <div class="max-h-80 overflow-y-auto">
-                            @forelse ($notifications as $notification)
-                                <form method="POST" action="{{ route('notifications.read', $notification->id) }}" class="border-b border-border-subtle last:border-0 dark:border-border-subtle-dark">@csrf<button class="flex w-full gap-3 px-4 py-3 text-left transition hover:bg-background dark:hover:bg-background-dark"><span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full {{ $notification->read_at ? 'bg-slate-300 dark:bg-slate-600' : 'bg-gold' }}"></span><span><span class="block text-sm font-semibold text-text-primary dark:text-text-primary-dark">{{ $notification->data['title'] ?? 'Activity update' }}</span><span class="mt-1 block text-xs leading-5 text-text-secondary dark:text-text-secondary-dark">{{ $notification->data['message'] ?? '' }}</span><span class="mt-1 block text-[10px] text-text-secondary dark:text-text-secondary-dark">{{ $notification->created_at->diffForHumans() }}</span></span></button></form>
-                            @empty
-                                <p class="px-4 py-8 text-center text-sm text-text-secondary dark:text-text-secondary-dark">No notifications yet.</p>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-            </div>
+@extends('adminlte::page')
+
+@section('title', 'Dashboard')
+
+@section('content_header')
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            <h1 class="m-0">Dashboard</h1>
+            <small class="text-muted">
+                Welcome back, {{ $user->name }}
+            </small>
         </div>
-    </x-slot>
 
-    <div class="space-y-6">
-        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            @foreach ($stats as $stat)
-                <article class="group relative overflow-hidden rounded-2xl border border-border-subtle bg-surface p-5 shadow-[0_12px_35px_rgba(13,27,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(13,27,42,0.08)] dark:border-border-subtle-dark dark:bg-surface-dark dark:shadow-none"><div class="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gold/5 transition group-hover:bg-gold/10"></div><div class="relative flex items-start justify-between"><div><p class="text-xs font-medium text-text-secondary dark:text-text-secondary-dark">{{ $stat['label'] }}</p><p class="mt-3 text-3xl font-semibold tracking-tight text-text-primary dark:text-text-primary-dark">{{ $stat['value'] }}</p><p class="mt-2 text-xs font-medium {{ str_contains($stat['detail'], 'Pending') || str_contains($stat['detail'], 'pending') ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400' }}">{{ $stat['detail'] }}</p></div><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/10 text-lg text-gold-dark dark:text-gold">{{ $stat['icon'] }}</span></div></article>
-            @endforeach
-        </section>
 
-        <section class="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
-            <article class="rounded-2xl border border-border-subtle bg-surface p-5 dark:border-border-subtle-dark dark:bg-surface-dark sm:p-6"><div class="flex items-start justify-between gap-4"><div><p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark dark:text-gold">Live activity</p><h2 class="mt-2 text-xl font-semibold text-text-primary dark:text-text-primary-dark">Your recent updates</h2></div><span class="rounded-full bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-dark dark:text-gold">{{ $notifications->count() }} total</span></div><div class="mt-6 space-y-4">@forelse ($notifications->take(5) as $notification)<div class="flex gap-3 rounded-xl border border-border-subtle bg-background p-3 dark:border-border-subtle-dark dark:bg-background-dark"><span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full {{ $notification->read_at ? 'bg-slate-300 dark:bg-slate-600' : 'bg-gold' }}"></span><div><p class="text-sm font-medium text-text-primary dark:text-text-primary-dark">{{ $notification->data['title'] ?? 'Activity update' }}</p><p class="mt-1 text-xs leading-5 text-text-secondary dark:text-text-secondary-dark">{{ $notification->data['message'] ?? '' }} · {{ $notification->created_at->diffForHumans() }}</p></div></div>@empty<div class="rounded-xl border border-dashed border-border-subtle px-4 py-8 text-center dark:border-border-subtle-dark"><p class="text-sm text-text-secondary dark:text-text-secondary-dark">Your activity will appear here as you use Team 0001.</p></div>@endforelse</div></article>
-            <article class="rounded-2xl border border-navy bg-navy p-6 text-white shadow-[0_18px_40px_rgba(13,27,42,0.16)]"><p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold">Account health</p><h2 class="mt-2 text-xl font-semibold">You are all set.</h2><p class="mt-5 text-sm leading-6 text-slate-300">Your identity is verified and your Team 0001 account is active.</p><div class="mt-7 h-2 overflow-hidden rounded-full bg-white/10"><div class="h-full w-full rounded-full bg-gold"></div></div><div class="mt-5 flex items-center justify-between border-t border-white/10 pt-5 text-xs text-slate-300"><span>Email verified</span><span class="font-semibold text-gold">100%</span></div><a href="{{ route('profile.edit') }}" class="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-gold px-4 py-3 text-sm font-semibold text-navy transition hover:bg-[#e2bd45]">Manage profile</a></article>
-        </section>
-
-        <section class="grid gap-6 xl:grid-cols-3"><article class="rounded-2xl border border-border-subtle bg-surface p-5 dark:border-border-subtle-dark dark:bg-surface-dark"><p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-secondary dark:text-text-secondary-dark">Account timeline</p><h2 class="mt-2 text-lg font-semibold text-text-primary dark:text-text-primary-dark">Member since</h2><p class="mt-5 text-3xl font-semibold text-text-primary dark:text-text-primary-dark">{{ Auth::user()->created_at->format('M d, Y') }}</p><p class="mt-2 text-sm text-text-secondary dark:text-text-secondary-dark">{{ Auth::user()->created_at->diffForHumans() }}</p></article><article class="rounded-2xl border border-border-subtle bg-surface p-5 dark:border-border-subtle-dark dark:bg-surface-dark"><p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-secondary dark:text-text-secondary-dark">Contact</p><h2 class="mt-2 text-lg font-semibold text-text-primary dark:text-text-primary-dark">Your details</h2><p class="mt-5 truncate text-sm font-medium text-text-primary dark:text-text-primary-dark">{{ Auth::user()->email }}</p><p class="mt-2 text-sm text-text-secondary dark:text-text-secondary-dark">{{ Auth::user()->phone ?: 'No phone number added' }}</p></article><article class="rounded-2xl border border-border-subtle bg-surface p-5 dark:border-border-subtle-dark dark:bg-surface-dark"><p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-secondary dark:text-text-secondary-dark">Next step</p><h2 class="mt-2 text-lg font-semibold text-text-primary dark:text-text-primary-dark">Complete your profile</h2><p class="mt-4 text-sm leading-6 text-text-secondary dark:text-text-secondary-dark">Keep your contact details current so the community can reach you.</p><a href="{{ route('profile.edit') }}" class="mt-4 inline-flex text-sm font-semibold text-gold-dark hover:text-gold dark:text-gold">Open profile →</a></article></section>
     </div>
-</x-app-layout>
+@stop
+
+
+@section('content')
+
+    <div class="container-fluid">
+
+        {{-- Overview --}}
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="info-box bg-white">
+
+                    <span class="info-box-icon bg-primary">
+                        <i class="fas fa-id-card"></i>
+                    </span>
+
+                    <div class="info-box-content">
+
+                        <span class="info-box-text text-muted">
+                            Member ID
+                        </span>
+
+                        <span class="info-box-number">
+                            {{ $user->member_id ?? 'Pending' }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <div class="info-box bg-white">
+
+                    <span class="info-box-icon bg-success">
+                        <i class="fas fa-check"></i>
+                    </span>
+
+                    <div class="info-box-content">
+
+                        <span class="info-box-text text-muted">
+                            Account
+                        </span>
+
+                        <span class="info-box-number">
+                            Active
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            {{-- Activity --}}
+            <div class="col-lg-8">
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3 class="card-title">
+                            <i class="fas fa-bell mr-2 text-primary"></i>
+                            Recent Activity
+                        </h3>
+
+                        @if ($unreadNotifications > 0)
+                            <div class="card-tools">
+
+                                <span class="badge badge-warning">
+                                    {{ $unreadNotifications }} unread
+                                </span>
+
+                            </div>
+                        @endif
+
+                    </div>
+
+
+                    <div class="card-body p-0">
+
+                        @forelse($notifications->take(5) as $notification)
+                            <div class="d-flex align-items-center px-3 py-3 border-bottom">
+
+                                <div class="mr-3">
+
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width:42px;height:42px;">
+
+                                        <i class="fas fa-bell text-primary"></i>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="flex-grow-1">
+
+                                    <div class="font-weight-bold">
+
+                                        {{ $notification->data['title'] ?? 'Activity update' }}
+
+                                    </div>
+
+                                    @if (!empty($notification->data['message']))
+                                        <div class="text-muted small">
+                                            {{ $notification->data['message'] }}
+                                        </div>
+                                    @endif
+
+                                    <div class="text-muted small mt-1">
+
+                                        <i class="far fa-clock mr-1"></i>
+
+                                        {{ $notification->created_at->diffForHumans() }}
+
+                                    </div>
+
+                                </div>
+
+
+                                @if (!$notification->read_at)
+                                    <span class="badge badge-primary">
+                                        New
+                                    </span>
+                                @endif
+
+                            </div>
+
+                        @empty
+
+                            <div class="text-center py-5 text-muted">
+
+                                <i class="far fa-bell-slash fa-2x mb-3"></i>
+
+                                <p class="mb-0">
+                                    No recent activity
+                                </p>
+
+                            </div>
+                        @endforelse
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- Profile --}}
+            <div class="col-lg-4">
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3 class="card-title">
+                            <i class="fas fa-user mr-2 text-primary"></i>
+                            My Profile
+                        </h3>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div class="text-center mb-4">
+
+                            <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center text-white"
+                                style="width:70px;height:70px;font-size:25px;">
+
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+
+                            </div>
+
+                            <h5 class="mt-3 mb-1">
+                                {{ $user->name }}
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                {{ $user->email }}
+                            </p>
+
+                        </div>
+
+
+                        <div class="border-top pt-3">
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <span class="text-muted">
+                                    Member ID
+                                </span>
+
+                                <strong>
+                                    {{ $user->member_id ?? 'Pending' }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <span class="text-muted">
+                                    Phone
+                                </span>
+
+                                <strong>
+                                    {{ $user->phone ?? 'Not added' }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-between">
+
+                                <span class="text-muted">
+                                    Joined
+                                </span>
+
+                                <strong>
+                                    {{ $user->created_at?->format('d M Y') }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-footer">
+
+                        <a href="{{ route('profile.edit') }}" class="btn btn-primary btn-block">
+
+                            <i class="fas fa-user-edit mr-1"></i>
+                            Edit Profile
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+@stop
