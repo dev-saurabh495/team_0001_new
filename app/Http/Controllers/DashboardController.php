@@ -10,7 +10,12 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $notifications = $user->notifications()->latest()->limit(8)->get();
+
+        $notifications = $user->notifications()
+            ->latest()
+            ->limit(8)
+            ->get();
+
         $unreadNotifications = $user->unreadNotifications()->count();
 
         $stats = [
@@ -33,13 +38,18 @@ class DashboardController extends Controller
                 'icon' => '◆',
             ],
             [
-                'label' => 'Email status',
-                'value' => $user->hasVerifiedEmail() ? 'OK' : 'Pending',
-                'detail' => $user->hasVerifiedEmail() ? 'Verified account' : 'Verify your email',
-                'icon' => $user->hasVerifiedEmail() ? '✓' : '!',
+                'label' => 'Member ID',
+                'value' => $user->member_id ?? 'Pending',
+                'detail' => $user->member_id ? 'Active member ID' : 'Not assigned',
+                'icon' => '#',
             ],
         ];
 
-        return view('dashboard', compact('notifications', 'unreadNotifications', 'stats'));
+        return view('dashboard', compact(
+            'user',
+            'notifications',
+            'unreadNotifications',
+            'stats'
+        ));
     }
 }

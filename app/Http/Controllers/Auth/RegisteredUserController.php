@@ -15,24 +15,13 @@ use Illuminate\Validation\Rules\Password;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Show the registration form.
-     */
     public function create()
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     */
     public function store(Request $request): RedirectResponse
     {
-        /*
-         * Rate-limit registration attempts by IP address.
-         *
-         * This helps prevent automated account creation.
-         */
         $key = 'register:' . Str::lower($request->ip());
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
@@ -50,9 +39,6 @@ class RegisteredUserController extends Controller
 
         RateLimiter::hit($key, 60);
 
-        /*
-         * Validate the request.
-         */
         $validated = $request->validate([
             'name' => [
                 'required',
@@ -82,6 +68,13 @@ class RegisteredUserController extends Controller
                 Password::defaults(),
             ],
 
+            'profile_picture' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+
             'terms' => [
                 'required',
                 'accepted',
@@ -97,12 +90,13 @@ class RegisteredUserController extends Controller
 
             'password.confirmed' => 'The passwords do not match.',
 
+            'profile_picture.image' => 'Please upload a valid image file.',
+            'profile_picture.mimes' => 'Profile picture must be a JPG, JPEG, PNG, or WEBP file.',
+            'profile_picture.max' => 'Profile picture must not exceed 2MB.',
+
             'terms.accepted' => 'You must accept the Terms of Service and Community Guidelines.',
         ]);
 
-        /*
-         * Create the user and generate a 6-digit OTP to verify email ownership.
-         */
         $otp = random_int(100000, 999999);
 
         $user = User::create([
@@ -114,7 +108,17 @@ class RegisteredUserController extends Controller
             'otp_expires_at' => now()->addMinutes(10),
         ]);
 
-        Mail::to($user->email)->send(new Team0001OtpMail($user, $otp));
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profile-pictures', 'public');
+
+            $user->update([
+                'profile_picture' => $path,
+            ]);
+        }
+
+        Mail::to($user->email)->send(
+            new Team0001OtpMail($user, $otp)
+        );
 
         RateLimiter::clear($key);
 
