@@ -4,7 +4,7 @@
 
 @section('title', 'Together. We Create. We Grow.')
 
-@section('meta\_description', 'Team 0001 — A youth community built around people, participation, shared experiences and
+@section('meta_description', 'Team 0001 — A youth community built around people, participation, shared experiences and
     growing together.')
 
 @section('content')
