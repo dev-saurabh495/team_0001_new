@@ -84,18 +84,7 @@ return [
     'logo_img_xl_class' => 'brand-image-xs opacity-75',
     'logo_img_alt' => 'Admin Logo',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Logo
-    |--------------------------------------------------------------------------
-    |
-    | Here you can setup an alternative logo to use on your login and register
-    | screens. When disabled, the admin panel logo will be used instead.
-    |
-    | For detailed instructions you can look the auth logo section here:
-    | https://jeroennoten.github.io/Laravel-AdminLTE/sections/configuration/basic_configuration.html
-    |
-    */
+
 
     'auth_logo' => [
         'enabled' => false,
@@ -108,29 +97,7 @@ return [
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Preloader Animation
-    |--------------------------------------------------------------------------
-    |
-    | Here you can change the preloader animation configuration. Currently, two
-    | modes are supported: 'fullscreen' for a fullscreen preloader animation
-    | and 'cwrapper' to attach the preloader animation into the content-wrapper
-    | element and avoid overlapping it with the sidebars and the top navbar.
-    | Any other value falls back to the 'fullscreen' mode.
-    |
-    | The 'img' options configure the default preloader content, which a view
-    | can replace altogether through its 'preloader' section. The 'effect' one
-    | accepts the legacy 'animation__shake', 'animation__wobble',
-    | 'animation__flipInX', 'animation__fadeIn', 'animation__fadeOut' and
-    | 'animation__spin' tokens; any other value emits no animation. Note the
-    | animation is always suppressed for the visitors who ask for reduced
-    | motion.
-    |
-    | For detailed instructions you can look the preloader section here:
-    | https://jeroennoten.github.io/Laravel-AdminLTE/sections/configuration/basic_configuration.html
-    |
-    */
+   
 
     'preloader' => [
         'enabled' => true,
@@ -144,28 +111,6 @@ return [
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | User Menu
-    |--------------------------------------------------------------------------
-    |
-    | Here you can activate and change the user menu, the dropdown of the
-    | navbar that holds the data of the authenticated user. When it is
-    | disabled, a plain logout link is rendered instead.
-    |
-    | The 'usermenu_header' option adds the colored header of the dropdown, and
-    | 'usermenu_header_class' holds its classes (a legacy 'bg-{color}' value is
-    | translated to the Bootstrap 5.3 'text-bg-{color}' helper).
-    |
-    | The 'usermenu_image', 'usermenu_desc' and 'usermenu_profile_url' options
-    | read their value from the authenticated user model, so they require it to
-    | provide, respectively, an 'adminlte_image()', an 'adminlte_desc()' and an
-    | 'adminlte_profile_url()' method. A missing method is ignored.
-    |
-    | For detailed instructions you can look the user menu section here:
-    | https://jeroennoten.github.io/Laravel-AdminLTE/sections/configuration/basic_configuration.html
-    |
-    */
 
     'usermenu_enabled' => true,
     'usermenu_header' => false,
@@ -174,20 +119,6 @@ return [
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
-    /*
-    |--------------------------------------------------------------------------
-    | URLs
-    |--------------------------------------------------------------------------
-    |
-    | Here we can modify the url settings of the admin panel. Every option
-    | below holds a plain url by default, or the name of a route when the
-    | 'use_route_url' option is enabled. A route name that can not be resolved
-    | falls back to a plain url, so a missing route does not break the panel.
-    |
-    | For detailed instructions you can look the urls section here:
-    | https://jeroennoten.github.io/Laravel-AdminLTE/sections/configuration/basic_configuration.html
-    |
-    */
 
     'use_route_url' => false,
     'dashboard_url' => 'home',
@@ -203,32 +134,7 @@ return [
     'password_email_url' => 'password/email',
     'profile_url' => false,
 
-    /*
-    |--------------------------------------------------------------------------
-    | Assets (AdminLTE v4)
-    |--------------------------------------------------------------------------
-    |
-    | Here you can configure how the base assets of the admin panel are served.
-    | AdminLTE v4 bundles Bootstrap 5.3 into its own stylesheet, but requires
-    | some external resources at runtime (the Bootstrap JavaScript bundle, the
-    | Bootstrap Icons font, the OverlayScrollbars plugin and the web font).
-    |
-    | The 'mode' option supports the next values:
-    | 'local' => Serve the assets published into the public folder. When a file
-    |            is not published (the third party assets require an extra step,
-    |            see the artisan console commands section of the docs), the CDN
-    |            location is used as a fallback when 'cdn_fallback' is enabled.
-    | 'cdn'   => Always serve the assets from the configured CDN locations.
-    |
-    | Any other value falls back to the 'local' mode.
-    |
-    | Note the RTL variant of a stylesheet is picked automatically when the RTL
-    | mode is active (see the 'rtl' section below).
-    |
-    | For detailed instructions you can look the assets section here:
-    | https://jeroennoten.github.io/Laravel-AdminLTE/sections/configuration/other.html
-    |
-    */
+    
 
     'assets' => [
 
