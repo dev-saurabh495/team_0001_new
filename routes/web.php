@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Web\ContactController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -28,6 +29,11 @@ Route::get('/join', function () {
 
 Route::view('/terms-and-conditions', 'Web.pages.terms')
     ->name('terms');
+
+Route::get('/contact', [ContactController::class, 'index'])
+    ->name('contact');
+Route::post('/contact', [ContactController::class, 'submit'])
+    ->name('contact.submit');
 
 Route::get('/language/{locale}', function ($locale) {
 
