@@ -1,36 +1,55 @@
 @import "tailwindcss";
+
 @plugin "@tailwindcss/forms";
 
-/* Enables class-based dark mode: <html class="dark"> */
+
+
+@import "./pages/home.css";
+@import "./pages/about.css";
+@import "./pages/events.css";
+@import "./pages/gallery.css";
+@import "./pages/terms.css";
+
+/* =========================================
+   DARK MODE
+========================================= */
+
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* =========================================
+   THEME
+========================================= */
+
 @theme {
-    /* Fonts */
     --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+
     --font-heading: "Cinzel", ui-serif, Georgia, serif;
 
-    /* Core brand */
-    --color-navy: #0D1B2A;
-    --color-navy-light: #1B263B;
-    --color-gold: #D4AF37;
-    --color-gold-dark: #B8941F;
+    --color-navy: #0d1b2a;
+    --color-navy-light: #1b263b;
 
-    /* Semantic tokens */
-    --color-background: #F8FAFC;
-    --color-background-dark: #0D1B2A;
+    --color-gold: #d4af37;
+    --color-gold-dark: #b8941f;
 
-    --color-surface: #FFFFFF;
-    --color-surface-dark: #1B263B;
+    --color-background: #f8fafc;
+    --color-background-dark: #0d1b2a;
 
-    --color-text-primary: #0D1B2A;
-    --color-text-primary-dark: #FFFFFF;
+    --color-surface: #ffffff;
+    --color-surface-dark: #1b263b;
+
+    --color-text-primary: #0d1b2a;
+    --color-text-primary-dark: #ffffff;
 
     --color-text-secondary: #475569;
-    --color-text-secondary-dark: #CBD5E1;
+    --color-text-secondary-dark: #cbd5e1;
 
-    --color-border-subtle: #E2E8F0;
-    --color-border-subtle-dark: rgba(255, 255, 255, 0.10);
+    --color-border-subtle: #e2e8f0;
+    --color-border-subtle-dark: rgba(255, 255, 255, 0.1);
 }
+
+/* =========================================
+   CUSTOM COMPONENTS
+========================================= */
 
 @layer components {
     .team0001-logo-badge {
@@ -46,8 +65,14 @@
     }
 }
 
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
