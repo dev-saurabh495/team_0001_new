@@ -13,17 +13,19 @@
             {{-- HERO --}}
             <section class="terms-hero">
 
-                <div class="terms-breadcrumb">
+                <nav class="team0001-contact-breadcrumb" aria-label="Breadcrumb">
+
                     <a href="{{ url('/') }}">
-                        {{ __('terms.home') }}
+                        {{ __('Home') }}
                     </a>
 
-                    <span>/</span>
+                    <span aria-hidden="true">/</span>
 
                     <span>
                         {{ __('terms.title') }}
                     </span>
-                </div>
+
+                </nav>
 
                 <div class="terms-hero-content">
 
