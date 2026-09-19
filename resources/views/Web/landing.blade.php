@@ -232,7 +232,7 @@
             color: var(--gold-light);
 
 
-
+p
             font-size: 10px;
             font-weight: 700;
             letter-spacing: .18em;
