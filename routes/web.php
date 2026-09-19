@@ -38,6 +38,9 @@ Route::post('/contact', [ContactController::class, 'submit'])
 Route::view('/faq', 'Web.pages.faq')
     ->name('faq');
 
+Route::view('/community-guidelines', 'Web.pages.community-guidelines')
+    ->name('community.guidelines');
+
 Route::get('/language/{locale}', function ($locale) {
 
     if (!in_array($locale, ['en', 'hi'])) {
