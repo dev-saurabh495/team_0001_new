@@ -25,6 +25,11 @@
             'route' => 'gallery',
             'fallback' => '#gallery',
         ],
+        [
+            'label' => 'contact',
+            'route' => 'contact',
+            'fallback' => 'contact',
+        ],
     ];
 
     $currentRoute = Route::currentRouteName();
