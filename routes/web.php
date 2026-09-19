@@ -26,6 +26,20 @@ Route::get('/join', function () {
     return view('Web.pages.join');
 })->name('join');
 
+Route::view('/terms-and-conditions', 'Web.pages.terms')
+    ->name('terms');
+
+Route::get('/language/{locale}', function ($locale) {
+
+    if (!in_array($locale, ['en', 'hi'])) {
+        abort(404);
+    }
+
+    session()->put('locale', $locale);
+
+    return redirect()->back();
+})->name('language');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
