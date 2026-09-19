@@ -41,6 +41,9 @@ Route::view('/faq', 'Web.pages.faq')
 Route::view('/community-guidelines', 'Web.pages.community-guidelines')
     ->name('community.guidelines');
 
+Route::view('/privacy-policy', 'Web.pages.privacy')
+    ->name('privacy');
+
 Route::get('/language/{locale}', function ($locale) {
 
     if (!in_array($locale, ['en', 'hi'])) {
