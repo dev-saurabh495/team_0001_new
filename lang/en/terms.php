@@ -12,6 +12,8 @@ return [
 
     'title_first' => 'Terms',
 
+    'breadcrumb' => 'Terms & Conditions',
+
     'title_second' => '& Conditions',
 
     'subtitle' => 'Please read these terms carefully before using the Team 0001 platform.',

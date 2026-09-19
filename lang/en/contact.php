@@ -16,6 +16,8 @@ return [
 
     'info_title' => 'We’re Here to Listen.',
 
+    'breadcrumb' => 'Contact Us',
+
     'info_description' => 'Whether you want to know more about Team 0001, participate in an activity, collaborate with us, or share an idea, feel free to reach out.',
 
     'email_label' => 'Email',
