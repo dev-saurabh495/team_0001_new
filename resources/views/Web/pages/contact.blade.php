@@ -29,7 +29,7 @@
 
 
                         <span>
-                            contact
+                            Contact
                         </span>
                     </nav>
 

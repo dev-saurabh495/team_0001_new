@@ -18,13 +18,13 @@
 
                 {{-- Team Logo --}}
                 <div class="team0001-faq-hero-logo">
-                    <img src="{{ asset('images/0001.jpeg') }}" alt="Team 0001 Logo" loading="eager">
+                    <img src="{{ asset('images/logo.png') }}" alt="Team 0001 Logo" loading="eager">
                 </div>
 
                 {{-- Breadcrumb --}}
                 <nav class="team0001-faq-breadcrumb" aria-label="Breadcrumb">
                     <a href="{{ url('/') }}">
-                        {{ __('common.home') }}
+                        Home
                     </a>
 
                     <span aria-hidden="true">/</span>
@@ -154,66 +154,66 @@
 
 
 
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
 
-            const faqItems = document.querySelectorAll('[data-faq-item]');
+                const faqItems = document.querySelectorAll('[data-faq-item]');
 
-            faqItems.forEach(function(item) {
+                faqItems.forEach(function(item) {
 
-                const button = item.querySelector('.team0001-faq-question');
+                    const button = item.querySelector('.team0001-faq-question');
 
-                button.addEventListener('click', function() {
+                    button.addEventListener('click', function() {
 
-                    const isOpen = item.classList.contains('is-open');
+                        const isOpen = item.classList.contains('is-open');
 
-                    // Close all other FAQ items
-                    faqItems.forEach(function(otherItem) {
+                        // Close all other FAQ items
+                        faqItems.forEach(function(otherItem) {
 
-                        if (otherItem !== item) {
+                            if (otherItem !== item) {
 
-                            otherItem.classList.remove('is-open');
+                                otherItem.classList.remove('is-open');
 
-                            const otherButton =
-                                otherItem.querySelector('.team0001-faq-question');
+                                const otherButton =
+                                    otherItem.querySelector('.team0001-faq-question');
 
-                            if (otherButton) {
-                                otherButton.setAttribute(
-                                    'aria-expanded',
-                                    'false'
-                                );
+                                if (otherButton) {
+                                    otherButton.setAttribute(
+                                        'aria-expanded',
+                                        'false'
+                                    );
+                                }
                             }
+
+                        });
+
+                        // Toggle current item
+                        if (isOpen) {
+
+                            item.classList.remove('is-open');
+
+                            button.setAttribute(
+                                'aria-expanded',
+                                'false'
+                            );
+
+                        } else {
+
+                            item.classList.add('is-open');
+
+                            button.setAttribute(
+                                'aria-expanded',
+                                'true'
+                            );
+
                         }
 
                     });
 
-                    // Toggle current item
-                    if (isOpen) {
-
-                        item.classList.remove('is-open');
-
-                        button.setAttribute(
-                            'aria-expanded',
-                            'false'
-                        );
-
-                    } else {
-
-                        item.classList.add('is-open');
-
-                        button.setAttribute(
-                            'aria-expanded',
-                            'true'
-                        );
-
-                    }
-
                 });
 
             });
-
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
 @endsection
