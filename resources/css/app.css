@@ -2,8 +2,6 @@
 
 @plugin "@tailwindcss/forms";
 
-
-
 @import "./pages/home.css";
 @import "./pages/about.css";
 @import "./pages/events.css";
@@ -13,7 +11,8 @@
 @import "./pages/faq.css";
 @import "./pages/community.css";
 @import "./pages/privacy.css";
-
+@import "./pages/about.css";
+@import "./components.css"; 
 /* =========================================
    DARK MODE
 ========================================= */
