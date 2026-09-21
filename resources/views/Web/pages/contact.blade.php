@@ -29,7 +29,7 @@
 
 
                         <span>
-                            Contact
+                            {{ __('contact.breadcrumb') }}
                         </span>
                     </nav>
 
