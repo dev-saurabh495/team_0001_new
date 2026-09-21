@@ -52,7 +52,7 @@ return [
         'governing_law' => 'लागू कानून',
         'contact' => 'संपर्क',
     ],
-
+// this is comment
     'sections' => [
 
         'introduction' => [
