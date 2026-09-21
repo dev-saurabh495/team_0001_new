@@ -82,7 +82,7 @@ class ContactController extends Controller
                 'string',
                 'max:10',
             ],
-            // data nhi ja rha 
+            
 
             'subject' => [
                 'required',
